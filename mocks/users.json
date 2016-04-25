@@ -1,0 +1,17 @@
+[{
+  "id": "1",
+  "name": "Jon Snow",
+  "email": "secrettargaryen@test.com"
+}, {
+  "id": "2",
+  "name": "Brandon Stark",
+  "email": "bran@weirwood.net"
+}, {
+  "id": "3",
+  "name": "Roose Bolton",
+  "email": "roose@bolt.on"
+}, {
+  "id": "4",
+  "name": "Arya Stark",
+  "email": "stickem@pointy.end"
+}]
