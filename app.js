@@ -45,6 +45,12 @@ mockFiles.forEach(function (jsonFile) {
     var filePath = mocks + endPoint + ".json";
     var fileContent = fs.readFileSync(filePath);
     var jsonContent = JSON.parse(fileContent);
+    var queryParams = Object.keys(req.query);
+    queryParams.forEach(function (queryParam) {
+      jsonContent = jsonContent.filter(function (item) {
+        return item[queryParam] == req.query[queryParam];
+      });
+    })
     res.json(jsonContent);
   });
 
