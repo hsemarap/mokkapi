@@ -1,0 +1,124 @@
+extends layout
+
+block content
+  script(src="https://code.jquery.com/jquery-1.12.3.min.js")
+  .container
+    h1= title
+    .preview.small.border.row
+        h2 Response
+        #response.medium.border.small-radius
+    #operations
+      h3 GET Data
+      #get.row.small.border
+        .five.column.wide
+          form.get
+            button.primary.button.click GET #{endPointShort}
+        .five.column.wide
+          form.get(action='#{endPointShort}/1')
+            input#getById(val=1)
+            button.primary.button.click(data-id='#getById',data-method='GET') GET #{endPointShort} by id
+      h3 GET Data with Query Params
+      #getQP.row.small.border
+        .twelve.column.wide
+          form.get(action='#{endPoint}', method='GET')
+            table.get.small.border
+              tr
+                td Attribute Name
+                td Attribute Value
+              tr.data
+                td
+                  input.name(name='name', placeholder='name')
+                td
+                  input.value(name='value', placeholder='value')
+                td
+                  input.data-action(type='button', value='Remove', data-type=0)
+              tr#data-clone.data.clone
+                td
+                  input.name(name='name', placeholder='name')
+                td
+                  input.value(name='value', placeholder='value')
+                td
+                  input.data-action(type='button', value='Remove', data-type=0)
+              tr.button-separator
+              tr
+                td
+                  input.data-action.primary.button(value='Add Attribute', type='button', data-type=1)
+                td
+                  button.primary.button.click(type='submit') GET #{endPointShort}
+      h3 POST Data
+      #post.row.small.border
+        .twelve.column.wide
+          form.post(action='#{endPoint}', method='POST')
+            table.post.small.border
+              tr
+                td Attribute Name
+                td Attribute Value
+              tr.data
+                td
+                  input.name(name='name', placeholder='name')
+                td
+                  input.value(name='value', placeholder='value')
+                td
+                  input.data-action(type='button', value='Remove', data-type=0)
+              tr#data-clone.data.clone
+                td
+                  input.name(name='name', placeholder='name')
+                td
+                  input.value(name='value', placeholder='value')
+                td
+                  input.data-action(type='button', value='Remove', data-type=0)
+              tr.button-separator
+              tr
+                td
+                  input.data-action.primary.button(value='Add Attribute', type='button', data-type=1)
+                td
+                  button#postData.primary.button.click(type='submit') POST new #{endPointShort}
+
+
+  style.
+    input ~ .click, .click ~ input {
+      margin: 0 20px;
+    }
+    #response {
+      min-height: 100px;
+    }
+    #response,.preview, #operations > div { padding: 20px; border-radius: 10px;}
+    #data-clone,.button-separator {display:none;}
+  script.
+    $(document).on('click', '.data-action', function(){
+      if($(this).data('type')) {
+        $(this).closest('table').find('.button-separator').before($('#data-clone').clone().removeAttr('id')[0].outerHTML)
+      } else {
+        $(this).closest('.data').remove();
+      }
+    });
+
+    $('form').on('change', '.data .name', function() {
+      $(this).closest('.data').find('.value').data('name', $(this).val());
+    });
+
+    $(document).on('change', '#getById', function(){
+      $(this).closest('form').attr('action', '#{endPoint}/' + $(this).val());
+    });
+
+    $(document).on('submit', 'form.post,form.get', function(e){
+      e.preventDefault();
+      var f = $(this);
+      var data = {};
+      $(f).find(".data:not(.clone) .value").each(function(idx,item){
+        var dataName = $(item).closest('.data').find('.name').val() || $(item).data('name');
+        var dataVal = $(item).val();
+        data[dataName] = dataVal;
+      })
+      var url = $(f).attr('action') || '#{endPoint}';
+      var method = $(f).attr('method') || 'GET';
+      $.ajax({
+        url: url,
+        method: method,
+        data: data,
+        success: function(data) {
+          data = JSON.stringify(data, null, 2).replace(/\n/g, '<br/>').replace(/\t/g, '&nbsp;&nbsp;').replace(/ /g, '&nbsp;&nbsp;');
+          $('#response').html(data);
+        }
+      })
+    });

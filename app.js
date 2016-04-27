@@ -8,7 +8,7 @@ var fs = require('fs');
 var glob = require('glob');
 
 var routes = require('./routes/index');
-var users = require('./routes/users');
+var mokkapiTest = require('./routes/mokkapi');
 
 var app = express();
 
@@ -34,6 +34,12 @@ var mocks = 'mocks';
 var mockFiles = glob.sync('./**/*.json', {
   cwd: mocks
 });
+
+app.use(function (req, res, next) {
+  req.mocks = mocks;
+  next();
+});
+
 mockFiles.forEach(function (jsonFile) {
   var endPoint = jsonFile.substring(1, jsonFile.lastIndexOf('.json'));
   var endPointWithId = endPoint + "/:id";
@@ -42,7 +48,7 @@ mockFiles.forEach(function (jsonFile) {
 
   // GET to list all entries
   app.get(endPoint, function (req, res, next) {
-    var filePath = mocks + endPoint + ".json";
+    var filePath = req.mocks + endPoint + ".json";
     var fileContent = fs.readFileSync(filePath);
     var jsonContent = JSON.parse(fileContent);
     var queryParams = Object.keys(req.query);
@@ -57,7 +63,7 @@ mockFiles.forEach(function (jsonFile) {
   // GET to list entry by id
   app.get(endPointWithId, function (req, res, next) {
     var itemId = req.params.id;
-    var filePath = mocks + endPoint + ".json";
+    var filePath = req.mocks + endPoint + ".json";
     var fileContent = fs.readFileSync(filePath);
     var jsonContent = JSON.parse(fileContent);
     var item = jsonContent.filter(function (item) {
@@ -65,6 +71,16 @@ mockFiles.forEach(function (jsonFile) {
     });
     res.json(item.length ? item[0] : {});
   });
+
+  // GET to test GET and POST
+  app.get("/mokkapi" + endPoint, function (req, res, next) {
+    req.endPoint = endPoint;
+    req.endPointWithId = endPointWithId;
+    console.log("Hit test");
+    next();
+  });
+
+  app.use("/mokkapi" + endPoint, mokkapiTest);
 });
 
 // catch 404 and forward to error handler
