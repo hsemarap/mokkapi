@@ -1,17 +1,21 @@
 [{
   "id": "1",
-  "name": "Jon Snow",
-  "email": "secrettargaryen@test.com"
+  "name": "Jon",
+  "house": "",
+  "email": "born@toj.com"
 }, {
   "id": "2",
-  "name": "Brandon Stark",
+  "name": "Brandon",
+  "house": "Stark",
   "email": "bran@weirwood.net"
 }, {
   "id": "3",
-  "name": "Roose Bolton",
+  "name": "Roose",
+  "house": "Bolton",
   "email": "roose@bolt.on"
 }, {
   "id": "4",
-  "name": "Arya Stark",
+  "name": "Arya",
+  "house": "Stark",
   "email": "stickem@pointy.end"
 }]
