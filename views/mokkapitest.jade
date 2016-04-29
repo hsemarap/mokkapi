@@ -87,7 +87,7 @@ block content
   script.
     $(document).on('click', '.data-action', function(){
       if($(this).data('type')) {
-        $(this).closest('table').find('.button-separator').before($('#data-clone').clone().removeAttr('id')[0].outerHTML)
+        $(this).closest('table').find('.button-separator').before($('#data-clone').clone().removeClass('clone').removeAttr('id')[0].outerHTML)
       } else {
         $(this).closest('.data').remove();
       }
