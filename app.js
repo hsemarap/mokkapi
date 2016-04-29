@@ -72,6 +72,42 @@ mockFiles.forEach(function (jsonFile) {
     res.json(item.length ? item[0] : {});
   });
 
+  // POST to list all entries
+  app.post(endPoint, function (req, res, next) {
+    var filePath = req.mocks + endPoint + ".json";
+    var fileContent = fs.readFileSync(filePath);
+    var jsonContent = JSON.parse(fileContent);
+    
+    var newItem = {};
+
+    var postParams = Object.keys(req.body);
+    postParams.forEach(function (postParam) {
+      newItem[postParam] = req.body[postParam];
+    })
+    
+    
+    if (Array.isArray(jsonContent)) {
+    	if (!newItem["id"]) {
+    		//Assuming id to be Array size + 1
+    		var newId = (jsonContent.length + 1).toString();
+    		newItem["id"] = newId;
+    	}
+    	jsonContent.push(newItem);
+    } else {
+    	newItem.forEach(function (newKey) {
+      		jsonContent[newKey] = newItem[newKey];
+    	});	
+    }
+
+    fileContent = JSON.stringify(jsonContent, null, 4);
+    try {
+    	fs.writeFileSync(filePath, fileContent, 'utf-8');    
+    	res.json(newItem);
+    } catch(e) {
+    	res.write("Error while writing file : " + filePath);
+    }
+  });
+
   // GET to test GET and POST
   app.get("/mokkapi" + endPoint, function (req, res, next) {
     req.endPoint = endPoint;
